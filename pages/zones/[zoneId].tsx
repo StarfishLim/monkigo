@@ -24,9 +24,30 @@ export default function ZoneDetailPage() {
   const [unlockedIds, setUnlockedIds] = useState<string[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [activeMonkeyId, setActiveMonkeyId] = useState<string | null>(null);
-  const queryMonkeyId = typeof router.query.monkey === "string" ? router.query.monkey : null;
+  const queryMonkey = typeof router.query.monkey === "string" ? router.query.monkey : null;
   const [viewMode, setViewMode] = useState<"carousel" | "grid">("grid");
-  const [carouselMonkeyId, setCarouselMonkeyId] = useState<string | null>(() => queryMonkeyId);
+  const [carouselMonkeyId, setCarouselMonkeyId] = useState<string | null>(null);
+
+  // Single list: zone monkeys sorted by number (same order for grid and carousel)
+  const sortedMonkeysForResolve = useMemo(
+    () => monkeys.slice().sort((a, b) => a.number - b.number),
+    [monkeys]
+  );
+  // Resolve ?monkey= to a monkey id (by id or by number e.g. "4" -> monkey with number 4 in this zone)
+  const resolvedCarouselMonkeyId = useMemo(() => {
+    if (!queryMonkey) return null;
+    const byId = sortedMonkeysForResolve.find((m) => m.id === queryMonkey);
+    if (byId) return byId.id;
+    const num = parseInt(queryMonkey, 10);
+    if (!Number.isNaN(num)) {
+      const byNumber = sortedMonkeysForResolve.find((m) => m.number === num);
+      return byNumber?.id ?? null;
+    }
+    return null;
+  }, [queryMonkey, sortedMonkeysForResolve]);
+
+  // Single source of truth for "which monkey to show in carousel": URL first, then state (from grid click before URL updates)
+  const selectedMonkeyIdForCarousel = resolvedCarouselMonkeyId ?? carouselMonkeyId;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -36,13 +57,13 @@ export default function ZoneDetailPage() {
     return () => window.removeEventListener("storage", load);
   }, []);
 
-  // When URL has ?monkey=id, open carousel with that monkey
+  // When URL has ?monkey=, open carousel and sync state
   useEffect(() => {
-    if (queryMonkeyId) {
+    if (resolvedCarouselMonkeyId) {
       setViewMode("carousel");
-      setCarouselMonkeyId(queryMonkeyId);
+      setCarouselMonkeyId(resolvedCarouselMonkeyId);
     }
-  }, [queryMonkeyId]);
+  }, [resolvedCarouselMonkeyId]);
 
   // In card (carousel) view, disable main vertical scroll so user can't scroll up
   useEffect(() => {
@@ -65,7 +86,7 @@ export default function ZoneDetailPage() {
   }
 
   const completed = monkeys.filter((m) => unlockedIds.includes(m.id)).length;
-  const sortedMonkeys = monkeys.slice().sort((a, b) => a.number - b.number);
+  const sortedMonkeys = sortedMonkeysForResolve;
   const activeMonkey = activeMonkeyId ? sortedMonkeys.find((m) => m.id === activeMonkeyId) ?? null : null;
   const progressPercent = monkeys.length ? Math.min(100, (completed / monkeys.length) * 100) : 0;
 
@@ -147,14 +168,14 @@ export default function ZoneDetailPage() {
 
       {viewMode === "carousel" && (
         <MonkeyCarousel
-          key={carouselMonkeyId ?? "carousel"}
+          key={selectedMonkeyIdForCarousel ?? "carousel"}
           monkeys={sortedMonkeys}
           unlockedIds={unlockedIds}
           onFound={(monkey) => {
             setActiveMonkeyId(monkey.id);
             setModalOpen(true);
           }}
-          initialMonkeyId={carouselMonkeyId}
+          initialMonkeyId={selectedMonkeyIdForCarousel}
         />
       )}
 

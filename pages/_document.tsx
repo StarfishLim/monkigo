@@ -4,6 +4,7 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
+        <link rel="icon" type="image/svg+xml" href="/icon-banana.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <title>MonkiGo</title>
         <meta name="theme-color" content="#FFE066" />

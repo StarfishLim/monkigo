@@ -142,19 +142,46 @@ button:focus-visible {
   }
 }
 
+/* Responsive illustration container: no overlap, fits narrow viewports (e.g. iPhone 14) */
+.mh-landing-illus-wrap {
+  min-height: 200px;
+  max-height: min(340px, 40dvh);
+  width: 100%;
+}
+@media (min-width: 420px) {
+  .mh-landing-illus-wrap {
+    max-height: 340px;
+  }
+}
+
 .mh-landing-mrt {
-  height: 380px;
+  height: 100%;
+  min-height: 200px;
+  max-height: min(340px, 40dvh);
   animation: mh-landing-mrt-in 1.2s ease-out forwards;
+}
+@media (min-width: 420px) {
+  .mh-landing-mrt {
+    max-height: 340px;
+  }
 }
 
 .mh-landing-scooter {
-  top: 140px;
-  left: 133px;
-  width: 200px;
+  top: 28%;
+  left: 28%;
+  width: 45%;
+  max-width: 200px;
   /* Hidden until MRT has finished transitioning (1.2s), then slides in */
   animation: mh-landing-slide-in 1.2s ease-out 1.2s forwards;
   transform: translateX(-100%);
   opacity: 0;
+}
+@media (min-width: 420px) {
+  .mh-landing-scooter {
+    top: 66px;
+    left: 133px;
+    width: 200px;
+  }
 }
 
 /* Card: soft shadow, bounce, optional tilt */

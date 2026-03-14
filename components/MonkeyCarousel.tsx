@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback, useEffect, useLayoutEffect } from "react";
 import type { Monkey } from "../lib/supabaseClient";
 
 const OVERLAP = 48; // negative gap: cards overlap by 48px so center stacks on top
@@ -19,6 +19,8 @@ export const MonkeyCarousel = ({ monkeys, unlockedIds, onFound, initialMonkeyId 
     initialMonkeyId != null ? monkeys.findIndex((m) => m.id === initialMonkeyId) : 0;
   const [currentIndex, setCurrentIndex] = useState(initialIndex >= 0 ? initialIndex : 0);
   const isJumpingRef = useRef(false);
+  const programmaticScrollRef = useRef(false);
+  const targetIndexForScroll = initialIndex >= 0 ? initialIndex : 0;
 
   // Loop: show [last, ...all, first] so we can scroll infinitely
   const displayList = [
@@ -73,7 +75,7 @@ export const MonkeyCarousel = ({ monkeys, unlockedIds, onFound, initialMonkeyId 
   }, [monkeys.length, getSegment]);
 
   const updateIndex = useCallback(() => {
-    if (isJumpingRef.current) return;
+    if (isJumpingRef.current || programmaticScrollRef.current) return;
     const el = scrollRef.current;
     if (!el || monkeys.length === 0) return;
     const segment = getSegment();
@@ -105,15 +107,51 @@ export const MonkeyCarousel = ({ monkeys, unlockedIds, onFound, initialMonkeyId 
     };
   }, [handleScroll, monkeys.length]);
 
-  // Start with first card or initialMonkeyId card centered
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el || monkeys.length === 0) return;
+  // Scroll to initialMonkeyId card (grid click or ?monkey=). Use scrollLeft + multiple passes so it sticks after layout.
+  const applyScrollToInitial = useCallback(() => {
+    if (monkeys.length === 0) return;
     const idx = initialMonkeyId != null ? monkeys.findIndex((m) => m.id === initialMonkeyId) : 0;
     const targetIndex = idx >= 0 ? idx : 0;
-    el.scrollLeft = getSegment() * (targetIndex + 1);
+    const segment = getSegment();
+    const targetScroll = segment * (targetIndex + 1);
+    const el = scrollRef.current;
+    if (!el) return;
+    programmaticScrollRef.current = true;
+    el.scrollLeft = targetScroll;
     setCurrentIndex(targetIndex);
-  }, [monkeys.length, getSegment(), initialMonkeyId]);
+    requestAnimationFrame(() => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollLeft = targetScroll;
+      }
+      setTimeout(() => {
+        programmaticScrollRef.current = false;
+      }, 400);
+    });
+  }, [initialMonkeyId, monkeys.length, getSegment]);
+
+  useLayoutEffect(() => {
+    if (monkeys.length === 0) return;
+    const idx = initialMonkeyId != null ? monkeys.findIndex((m) => m.id === initialMonkeyId) : 0;
+    const targetIndex = idx >= 0 ? idx : 0;
+    setCurrentIndex(targetIndex);
+    const segment = getSegment();
+    const targetScroll = segment * (targetIndex + 1);
+    const el = scrollRef.current;
+    if (el) {
+      programmaticScrollRef.current = true;
+      el.scrollLeft = targetScroll;
+    }
+    const raf = requestAnimationFrame(() => applyScrollToInitial());
+    const t1 = setTimeout(applyScrollToInitial, 50);
+    const t2 = setTimeout(applyScrollToInitial, 150);
+    const t3 = setTimeout(applyScrollToInitial, 400);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [monkeys.length, getSegment(), initialMonkeyId, applyScrollToInitial]);
 
   if (monkeys.length === 0) return null;
 
