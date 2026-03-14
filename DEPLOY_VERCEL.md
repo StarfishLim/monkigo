@@ -15,7 +15,7 @@ Follow these steps to get your Next.js app live on Vercel.
 3. **In your project folder**, open Terminal and run:
 
    ```bash
-   cd path/to/monkigo   # replace with your project path, or skip if already there
+   cd /Users/starfish/Desktop/Playground/monkiGO
    git init
    git add .
    git commit -m "Initial commit"

@@ -39,7 +39,7 @@ export default function FeedbackPage() {
 
   return (
     <div className="-mx-4 -mt-6 flex min-h-0 flex-1 flex-col px-3 pt-2">
-      <header className="flex shrink-0 items-center gap-2 py-2">
+      <header className="flex shrink-0 items-center justify-center gap-2 pt-7 pb-2">
         <Link
           href="/"
           className="flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200/80 bg-slate-100/90 text-slate-600 transition active:scale-95"

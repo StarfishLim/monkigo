@@ -7,10 +7,12 @@ import { getLocalUnlockedMonkeyIds, unlockMonkey } from "../../lib/progress";
 import { MonkeyCarousel } from "../../components/MonkeyCarousel";
 import { QuestionModal } from "../../components/QuestionModal";
 import { useSupabase } from "../../lib/supabaseClient";
+import { useLockMainScroll } from "../../lib/LockMainScrollContext";
 
 export default function ZoneDetailPage() {
   const supabase = useSupabase();
   const router = useRouter();
+  const lockMainScroll = useLockMainScroll();
   const zoneId = typeof router.query.zoneId === "string" ? router.query.zoneId : "";
 
   const zone = useMemo(() => mockZones.find((z) => z.id === zoneId) ?? null, [zoneId]);
@@ -42,6 +44,12 @@ export default function ZoneDetailPage() {
     }
   }, [queryMonkeyId]);
 
+  // In card (carousel) view, disable main vertical scroll so user can't scroll up
+  useEffect(() => {
+    lockMainScroll?.setLockMainScroll(viewMode === "carousel");
+    return () => lockMainScroll?.setLockMainScroll(false);
+  }, [viewMode, lockMainScroll]);
+
   if (!zoneId) return null;
 
   if (!zone) {
@@ -63,38 +71,39 @@ export default function ZoneDetailPage() {
 
   return (
     <div className="flex min-h-[100dvh] flex-col">
-      {/* Header: close, title + progress bar, badge — sticky at top */}
-      <header className="sticky top-0 z-10 flex shrink-0 items-center gap-3 bg-white px-2 pb-3 pt-6" style={{ backgroundColor: "#ffffff" }}>
-        <Link
-          href="/zones"
-          className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-2xl border border-slate-200/80 bg-slate-100/90 text-slate-600 transition active:scale-95"
-          aria-label="Close"
-        >
-          <span className="text-lg font-semibold">×</span>
-        </Link>
-        <div className="min-w-0 flex-1">
-          <h1 className="truncate text-center text-xl font-bold text-slate-800">{zone.name}</h1>
-          <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-slate-200/80">
-            <div
-              className="h-full rounded-full bg-jungle transition-all duration-300"
-              style={{ width: `${progressPercent}%` }}
-            />
+      {/* Sticky block: header + toggle stay together, solid background when scrolling */}
+      <div className="sticky top-0 z-10 flex shrink-0 flex-col border-b border-slate-200/80 bg-white shadow-none">
+        <header className="flex shrink-0 items-center gap-3 px-2 pb-3 pt-6">
+          <Link
+            href="/zones"
+            className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-2xl border border-slate-200/80 bg-slate-100/90 text-slate-600 transition active:scale-95"
+            aria-label="Close"
+          >
+            <span className="text-lg font-semibold">×</span>
+          </Link>
+          <div className="min-w-0 flex-1">
+            <h1 className="truncate text-center text-xl font-bold text-slate-800">{zone.name}</h1>
+            <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-slate-200/80">
+              <div
+                className="h-full rounded-full bg-jungle transition-all duration-300"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
           </div>
-        </div>
-        <div className="flex shrink-0 flex-col items-end gap-0.5">
-          <img
-            src="/Group 9.svg"
-            alt=""
-            className="h-5 w-auto"
-          />
-          <span className="w-full text-center text-base font-bold text-[#00C000]">
-            {completed}/{monkeys.length}
-          </span>
-        </div>
-      </header>
+          <div className="flex shrink-0 flex-col items-end gap-0.5">
+            <img
+              src="/Group 9.svg"
+              alt=""
+              className="h-5 w-auto"
+            />
+            <span className="w-full text-center text-base font-bold text-[#00C000]">
+              {completed}/{monkeys.length}
+            </span>
+          </div>
+        </header>
 
-      {/* Toggle: carousel (cards) vs grid (thumbnails) */}
-      <div className="flex shrink-0 justify-center gap-0.5 px-2 py-2">
+        {/* Toggle: carousel (cards) vs grid (thumbnails) — sticks with header */}
+        <div className="flex shrink-0 justify-center gap-0.5 px-2 py-2">
         <button
           type="button"
           onClick={() => setViewMode("carousel")}
@@ -133,6 +142,7 @@ export default function ZoneDetailPage() {
           </svg>
           Grid
         </button>
+      </div>
       </div>
 
       {viewMode === "carousel" && (

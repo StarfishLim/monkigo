@@ -3,18 +3,21 @@ import "../styles/globals.css";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { createBrowserSupabaseClient, isSupabaseConfigured, SupabaseContext } from "../lib/supabaseClient";
+import { LockMainScrollProvider, useLockMainScroll } from "../lib/LockMainScrollContext";
 import { BottomNav } from "../components/BottomNav";
 
-export default function MonkeyHuntApp({ Component, pageProps }: AppProps) {
+function MainContent({ Component, pageProps }: AppProps) {
   const [supabase] = useState(() => (isSupabaseConfigured ? createBrowserSupabaseClient() : null));
   const [isReady, setIsReady] = useState(false);
   const router = useRouter();
+  const { lockMainScroll } = useLockMainScroll();
 
   useEffect(() => {
     setIsReady(true);
   }, []);
 
   const isLanding = router.pathname === "/";
+  const noVerticalScroll = isLanding || lockMainScroll;
 
   return (
     <SupabaseContext.Provider value={supabase}>
@@ -24,11 +27,11 @@ export default function MonkeyHuntApp({ Component, pageProps }: AppProps) {
         <div className="flex min-h-full w-full flex-1 items-center justify-center overflow-hidden p-0 sm:p-4">
           {/* Locked mobile screen: full viewport on mobile, max 420px frame on desktop */}
           <div className="relative flex min-h-[100dvh] h-[100dvh] max-h-[100dvh] w-full max-w-[420px] flex-col overflow-hidden rounded-none bg-white shadow-none sm:max-h-[calc(100dvh-2rem)] sm:rounded-[2.25rem] sm:shadow-[0_18px_45px_rgba(15,23,42,0.25)]">
-            {/* Main: scrollable on inner pages, locked (no scroll) on landing */}
+            {/* Main: no vertical scroll on landing or in zone card view; scroll on other pages */}
             <main
               className={
-                "flex min-h-0 w-full flex-1 flex-col gap-4 overflow-x-hidden overscroll-contain px-4 pb-28 " +
-                (isLanding ? "overflow-y-hidden" : "overflow-y-auto")
+                "flex min-h-0 w-full flex-1 flex-col gap-4 overflow-x-hidden overscroll-contain pb-28 " +
+                (noVerticalScroll ? "overflow-y-hidden px-0" : "overflow-y-auto px-4")
               }
             >
               {!isSupabaseConfigured ? (
@@ -53,6 +56,14 @@ export default function MonkeyHuntApp({ Component, pageProps }: AppProps) {
         </div>
       </div>
     </SupabaseContext.Provider>
+  );
+}
+
+export default function MonkeyHuntApp(props: AppProps) {
+  return (
+    <LockMainScrollProvider>
+      <MainContent {...props} />
+    </LockMainScrollProvider>
   );
 }
 
