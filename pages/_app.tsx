@@ -10,7 +10,8 @@ function MainContent({ Component, pageProps }: AppProps) {
   const [supabase] = useState(() => (isSupabaseConfigured ? createBrowserSupabaseClient() : null));
   const [isReady, setIsReady] = useState(false);
   const router = useRouter();
-  const { lockMainScroll } = useLockMainScroll();
+  const ctx = useLockMainScroll();
+  const lockMainScroll = ctx?.lockMainScroll ?? false;
 
   useEffect(() => {
     setIsReady(true);
