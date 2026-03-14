@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#37B24D" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#FFE066" stop-opacity="0.65"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="600" fill="url(#bg)"/>
+  <g opacity="0.55">
+    <path d="M70 470 C190 350, 280 520, 410 380 C540 240, 590 480, 740 300 C810 215, 860 240, 900 210" fill="none" stroke="#0f172a" stroke-width="18"/>
+    <path d="M0 210 C120 160, 210 260, 340 190 C470 120, 610 250, 720 160 C810 90, 860 120, 900 80" fill="none" stroke="#0f172a" stroke-width="10" opacity="0.6"/>
+  </g>
+  <g>
+    <rect x="150" y="120" width="600" height="360" rx="28" fill="#ffffff" opacity="0.70"/>
+    <text x="450" y="320" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="92" font-weight="800" fill="#0f172a">=I</text>
+    <text x="450" y="180" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="22" font-weight="800" fill="#0f172a" opacity="0.9">Art Appreciator</text>
+    <text x="450" y="445" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="14" fill="#334155" opacity="0.85">Mock artwork preview (replace with real photo)</text>
+  </g>
+</svg>
+

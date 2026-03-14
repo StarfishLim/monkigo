@@ -1,0 +1,19 @@
+import { Head, Html, Main, NextScript } from "next/document";
+
+export default function Document() {
+  return (
+    <Html lang="en">
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <title>MonkiGo</title>
+        <meta name="theme-color" content="#FFE066" />
+        <meta name="description" content="MonkiGo: discover hidden monkey artworks at Upper Thomson MRT." />
+      </Head>
+      <body>
+        <Main />
+        <NextScript />
+      </body>
+    </Html>
+  );
+}
+

@@ -1,0 +1,199 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Lock viewport: no page/body scroll, only inner app content scrolls */
+html {
+  height: 100%;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  overflow: hidden;
+}
+
+body {
+  height: 100%;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  overflow: hidden;
+  position: relative;
+  background-color: #e2e8f0;
+  color: #1e293b;
+  font-family: "Nunito", system-ui, -apple-system, sans-serif;
+}
+
+a {
+  color: #46a302;
+}
+
+button {
+  outline: none;
+}
+button:focus-visible {
+  box-shadow: 0 0 0 2px #fffbf7, 0 0 0 4px #58cc02;
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Top safe area so header isn't under notch/status bar on mobile */
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Main content: min 2.5rem top padding, plus safe area when present */
+.main-content-safe-top {
+  padding-top: max(2.5rem, calc(2.5rem + env(safe-area-inset-top, 0px)));
+}
+
+.mh-shine {
+  background: radial-gradient(140px 140px at 30% 20%, rgba(255, 255, 255, 0.8), transparent 60%),
+    linear-gradient(135deg, rgba(88, 204, 2, 0.08), rgba(28, 176, 246, 0.06));
+}
+
+/* Progress bar fill animation */
+@keyframes mh-progress-fill {
+  from {
+    width: 0;
+  }
+}
+
+.mh-progress-fill {
+  animation: mh-progress-fill 0.6s ease-out forwards;
+}
+
+@keyframes mh-pop {
+  0% {
+    transform: scale(0.92);
+  }
+  55% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.mh-pop {
+  animation: mh-pop 450ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes mh-confetti-fall {
+  0% {
+    transform: translate3d(var(--x0), -12px, 0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--x1), 240px, 0) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.mh-confetti-piece {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 4px;
+  animation: mh-confetti-fall 900ms ease-in forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes mh-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.mh-float {
+  animation: mh-float 2.4s ease-in-out infinite;
+}
+
+/* Landing page: MRT and scooter enter from left to right (scooter only after MRT is in) */
+@keyframes mh-landing-slide-in {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes mh-landing-mrt-in {
+  from {
+    transform: translateX(-100%) scale(1.2);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateX(0) scale(1.2);
+    opacity: 1;
+  }
+}
+
+.mh-landing-mrt {
+  height: 380px;
+  animation: mh-landing-mrt-in 1.2s ease-out forwards;
+}
+
+.mh-landing-scooter {
+  top: 140px;
+  left: 133px;
+  width: 200px;
+  /* Hidden until MRT has finished transitioning (1.2s), then slides in */
+  animation: mh-landing-slide-in 1.2s ease-out 1.2s forwards;
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+/* Card: soft shadow, bounce, optional tilt */
+.mh-card {
+  box-shadow: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+@media (hover: hover) {
+  .mh-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  }
+}
+.mh-card:active {
+  transform: scale(0.98);
+}
+
+/* Duolingo-style button: raised, bounce on tap */
+.mh-btn-duo {
+  box-shadow: 0 4px 0 0 #46A302;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.mh-btn-duo:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 0 #46A302;
+}
+
+@keyframes mh-btn-bounce {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.96);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.mh-btn-bounce:active {
+  animation: mh-btn-bounce 0.2s ease-out;
+}
+
