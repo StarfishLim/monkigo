@@ -38,11 +38,9 @@ export const CelebrationBurst = ({ show, onDone }: CelebrationBurstProps) => {
             width: p.size,
             height: p.size,
             animationDelay: p.delay,
-            // @ts-expect-error CSS variables
-            ["--x0"]: p.x0,
-            // @ts-expect-error CSS variables
-            ["--x1"]: p.x1
-          }}
+            ["--x0" as string]: p.x0,
+            ["--x1" as string]: p.x1,
+          } as React.CSSProperties}
         />
       ))}
     </div>
