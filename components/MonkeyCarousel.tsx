@@ -159,10 +159,10 @@ export const MonkeyCarousel = ({ monkeys, unlockedIds, onFound, initialMonkeyId 
   const isUnlocked = current ? unlockedIds.includes(current.id) : false;
 
   return (
-    <div className="flex w-full min-w-[420px] flex-1 flex-col justify-start items-center -mx-4 pb-44">
+    <div className="flex w-full min-w-0 flex-1 flex-col justify-start items-center px-2 pb-44">
       <div
         ref={scrollRef}
-        className="flex w-full min-w-[420px] snap-x snap-mandatory overflow-x-auto overflow-y-hidden scroll-smooth bg-transparent pb-4 text-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex w-full min-w-0 snap-x snap-mandatory overflow-x-auto overflow-y-hidden scroll-smooth bg-transparent pb-4 text-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" } as React.CSSProperties}
       >
         {displayList.map((monkey, i) => {
@@ -245,11 +245,11 @@ export const MonkeyCarousel = ({ monkeys, unlockedIds, onFound, initialMonkeyId 
         ))}
       </div>
 
-      {/* Fixed bar above bottom nav: monkey name, clue, I FOUND IT button (like FAQ "Start the hunt") */}
+      {/* Fixed bar just above Cards/Grid toggle: monkey name, clue, I FOUND IT button */}
       {current && (
         <div
           className="safe-bottom fixed left-0 right-0 z-20"
-          style={{ bottom: "7.5rem" }}
+          style={{ bottom: "5rem" }}
         >
           <div className="mx-auto w-full max-w-[420px] px-4">
             <div className="rounded-3xl bg-white/95 px-4 py-3 backdrop-blur-md">

@@ -23,6 +23,7 @@ export default function ZoneDetailPage() {
 
   const [unlockedIds, setUnlockedIds] = useState<string[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [zoneCompleteModalOpen, setZoneCompleteModalOpen] = useState(false);
   const [activeMonkeyId, setActiveMonkeyId] = useState<string | null>(null);
   const queryMonkey = typeof router.query.monkey === "string" ? router.query.monkey : null;
   const [viewMode, setViewMode] = useState<"carousel" | "grid">("grid");
@@ -71,6 +72,13 @@ export default function ZoneDetailPage() {
     return () => lockMainScroll?.setLockMainScroll(false);
   }, [viewMode, lockMainScroll]);
 
+  // Zone complete modal: auto-close after 3s
+  useEffect(() => {
+    if (!zoneCompleteModalOpen) return;
+    const t = setTimeout(() => setZoneCompleteModalOpen(false), 3000);
+    return () => clearTimeout(t);
+  }, [zoneCompleteModalOpen]);
+
   if (!zoneId) return null;
 
   if (!zone) {
@@ -93,8 +101,8 @@ export default function ZoneDetailPage() {
   return (
     <div className="flex min-h-[100dvh] flex-col">
       {/* Sticky block: header + toggle stay together, solid background when scrolling */}
-      <div className="sticky top-0 z-10 flex shrink-0 flex-col border-b border-slate-200/80 bg-white shadow-none">
-        <header className="flex shrink-0 items-center gap-3 px-2 pb-3 pt-6">
+      <div className="sticky top-0 z-10 flex shrink-0 flex-col bg-white shadow-none">
+        <header className="flex shrink-0 items-center gap-3 px-5 pb-3 pt-6">
           <Link
             href="/zones"
             className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-2xl border border-slate-200/80 bg-slate-100/90 text-slate-600 transition active:scale-95"
@@ -123,47 +131,6 @@ export default function ZoneDetailPage() {
           </div>
         </header>
 
-        {/* Toggle: carousel (cards) vs grid (thumbnails) — sticks with header */}
-        <div className="flex shrink-0 justify-center gap-0.5 px-2 py-2">
-        <button
-          type="button"
-          onClick={() => setViewMode("carousel")}
-          aria-pressed={viewMode === "carousel"}
-          aria-label="Cards view"
-          className={
-            "flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition " +
-            (viewMode === "carousel"
-              ? "border border-jungle bg-[rgba(88,204,2,0.1)] text-slate-700"
-              : "bg-slate-100 text-slate-600 active:bg-slate-200")
-          }
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-            <rect x="2" y="4" width="14" height="16" rx="2" />
-            <rect x="8" y="2" width="14" height="16" rx="2" />
-          </svg>
-          Cards
-        </button>
-        <button
-          type="button"
-          onClick={() => setViewMode("grid")}
-          aria-pressed={viewMode === "grid"}
-          aria-label="Grid view"
-          className={
-            "flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition " +
-            (viewMode === "grid"
-              ? "border border-jungle bg-[rgba(88,204,2,0.1)] text-slate-700"
-              : "bg-slate-100 text-slate-600 active:bg-slate-200")
-          }
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-            <rect x="3" y="3" width="7" height="7" rx="1" />
-            <rect x="14" y="3" width="7" height="7" rx="1" />
-            <rect x="3" y="14" width="7" height="7" rx="1" />
-            <rect x="14" y="14" width="7" height="7" rx="1" />
-          </svg>
-          Grid
-        </button>
-      </div>
       </div>
 
       {viewMode === "carousel" && (
@@ -180,7 +147,7 @@ export default function ZoneDetailPage() {
       )}
 
       {viewMode === "grid" && (
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-44 px-2">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-24 px-5">
           <div className="mx-auto grid max-w-md grid-cols-2 gap-3 py-2 sm:grid-cols-3">
             {sortedMonkeys.map((monkey) => {
               const unlocked = unlockedIds.includes(monkey.id);
@@ -222,6 +189,50 @@ export default function ZoneDetailPage() {
         </div>
       )}
 
+      {/* Fixed bottom: Cards / Grid toggle (no main nav on this page) */}
+      <div className="safe-bottom fixed inset-x-0 bottom-0 z-20 mx-auto flex max-w-[420px] justify-center border-t border-slate-200/80 bg-white/95 px-5 py-3 backdrop-blur-sm" style={{ paddingBottom: "12px" }}>
+        <div className="flex gap-0.5 rounded-xl bg-slate-100/80 p-1">
+          <button
+            type="button"
+            onClick={() => setViewMode("carousel")}
+            aria-pressed={viewMode === "carousel"}
+            aria-label="Cards view"
+            className={
+              "flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition " +
+              (viewMode === "carousel"
+                ? "bg-white text-slate-800 shadow-sm"
+                : "text-slate-600 active:bg-slate-200")
+            }
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <rect x="2" y="4" width="14" height="16" rx="2" />
+              <rect x="8" y="2" width="14" height="16" rx="2" />
+            </svg>
+            Cards
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("grid")}
+            aria-pressed={viewMode === "grid"}
+            aria-label="Grid view"
+            className={
+              "flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition " +
+              (viewMode === "grid"
+                ? "bg-white text-slate-800 shadow-sm"
+                : "text-slate-600 active:bg-slate-200")
+            }
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+            Grid
+          </button>
+        </div>
+      </div>
+
       <QuestionModal
         open={modalOpen}
         monkey={activeMonkey}
@@ -229,9 +240,34 @@ export default function ZoneDetailPage() {
         onClose={() => setModalOpen(false)}
         onUnlock={async (monkey) => {
           await unlockMonkey(supabase, monkey.id);
-          setUnlockedIds(getLocalUnlockedMonkeyIds());
+          const ids = getLocalUnlockedMonkeyIds();
+          setUnlockedIds(ids);
+          if (ids.length === mockMonkeys.length) {
+            setModalOpen(false);
+            router.push("/success");
+          } else {
+            const completedInZone = monkeys.filter((m) => ids.includes(m.id)).length;
+            if (completedInZone === monkeys.length) {
+              setModalOpen(false);
+              setZoneCompleteModalOpen(true);
+            }
+          }
         }}
       />
+
+      {zoneCompleteModalOpen && zone && (
+        <div className="mh-zone-complete-bg fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4">
+          <div className="mh-zone-complete-card w-full max-w-sm rounded-3xl bg-white p-5 text-center shadow-soft-lg">
+            <div className="mb-4 flex justify-center">
+              <img src="/Group 7.svg" alt="" className="h-24 w-auto" />
+            </div>
+            <p className="text-lg font-bold text-slate-900">Zone complete!</p>
+            <p className="mt-1 text-sm font-semibold text-slate-600">
+              You’ve collected all monkeys in {zone.name}.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

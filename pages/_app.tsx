@@ -18,6 +18,8 @@ function MainContent({ Component, pageProps }: AppProps) {
   }, []);
 
   const isLanding = router.pathname === "/";
+  const isZoneDetail = router.pathname === "/zones/[zoneId]";
+  const isSuccess = router.pathname === "/success";
   const noVerticalScroll = isLanding || lockMainScroll;
 
   return (
@@ -52,7 +54,7 @@ function MainContent({ Component, pageProps }: AppProps) {
               )}
             </main>
 
-            {!isLanding && <BottomNav />}
+            {!isLanding && !isZoneDetail && !isSuccess && <BottomNav />}
           </div>
         </div>
       </div>

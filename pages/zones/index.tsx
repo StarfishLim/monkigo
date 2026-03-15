@@ -1,12 +1,15 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { ZoneProgressBadge } from "../../components/ZoneProgressBadge";
 import { mockMonkeys, mockZones } from "../../lib/mockData";
 import { monkeyBelongsToZone } from "../../lib/supabaseClient";
-import { getLocalUnlockedMonkeyIds } from "../../lib/progress";
+import { getLocalUnlockedMonkeyIds, LOCAL_PROGRESS_KEY } from "../../lib/progress";
 
 export default function ZonesPage() {
+  const router = useRouter();
   const [unlockedIds, setUnlockedIds] = useState<string[]>([]);
+  const [restartConfirmOpen, setRestartConfirmOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -47,15 +50,16 @@ export default function ZonesPage() {
 
   return (
     <div className="flex flex-col pb-4">
-      {/* Header: back arrow, logo + progress bar, badge — sticky at top */}
-      <header className="sticky top-0 z-10 mt-3 flex shrink-0 items-center gap-3 bg-white px-2 py-3">
-        <Link
-          href="/"
+      {/* Header: close icon, logo + progress bar, badge — sticky at top */}
+      <header className="sticky top-0 z-10 mt-3 flex shrink-0 items-center gap-3 bg-white px-5 py-3">
+        <button
+          type="button"
+          onClick={() => setRestartConfirmOpen(true)}
           className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-2xl border border-slate-200/80 bg-slate-100/90 text-slate-600 transition active:scale-95"
-          aria-label="Back"
+          aria-label="Close"
         >
-          <span className="text-lg font-semibold">←</span>
-        </Link>
+          <span className="text-lg font-semibold">×</span>
+        </button>
         <div className="min-w-0 flex-1">
           <div className="flex justify-center">
             <img
@@ -160,6 +164,39 @@ export default function ZonesPage() {
           );
         })}
       </div>
+
+      {restartConfirmOpen && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-sm rounded-3xl bg-white p-5 text-center shadow-soft-lg">
+            <p className="text-lg font-bold text-slate-900">Restart your hunt?</p>
+            <p className="mt-1 text-sm font-semibold text-slate-600">
+              This will reset your monkey progress for this device.
+            </p>
+            <div className="mt-5 flex gap-3">
+              <button
+                type="button"
+                onClick={() => setRestartConfirmOpen(false)}
+                className="w-1/2 rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-700 active:scale-95"
+              >
+                Keep progress
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    window.localStorage.removeItem(LOCAL_PROGRESS_KEY);
+                  }
+                  router.push("/");
+                  setRestartConfirmOpen(false);
+                }}
+                className="w-1/2 rounded-2xl bg-rose-500 px-3 py-3 text-sm font-bold text-white active:scale-95"
+              >
+                Reset & restart
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

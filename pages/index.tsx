@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function LandingPage() {
   return (
-    <div className="flex min-h-full w-full flex-1 flex-col items-center justify-center overflow-hidden overflow-x-hidden px-4 pb-0 pt-6 safe-top">
+    <div className="flex min-h-[100dvh] h-full w-full flex-1 flex-col items-center justify-center overflow-hidden overflow-x-hidden px-4 pb-0 pt-6 safe-top">
       <div className="flex w-full max-w-[420px] flex-shrink-0 flex-col items-center gap-6">
         <img
           src="/logo.svg"
@@ -28,7 +28,7 @@ export default function LandingPage() {
           <br />
           Upper Thomson MRT
         </p>
-        <div className="flex w-full max-w-xs flex-col gap-3">
+        <div className="flex w-full max-w-xs flex-col gap-5">
           <Link
             href="/zones"
             className="mh-btn-duo mh-btn-bounce flex min-h-14 items-center justify-center rounded-2xl bg-jungle px-4 py-4 text-base font-extrabold uppercase tracking-wide text-white"
