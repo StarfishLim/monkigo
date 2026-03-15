@@ -65,29 +65,25 @@ export const ZoneProgressBadge: React.FC<ZoneProgressBadgeProps> = ({ progress, 
       <defs>
         <filter
           id="shadow"
-          x="5"
-          y="4"
-          width="60"
-          height="60"
-          filterUnits="userSpaceOnUse"
+          x="-20%"
+          y="-20%"
+          width="140%"
+          height="140%"
+          filterUnits="objectBoundingBox"
           colorInterpolationFilters="sRGB"
         >
-          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feOffset dy="2" in="SourceAlpha" result="offset" />
+          <feGaussianBlur stdDeviation="2" in="offset" result="blur" />
           <feColorMatrix
-            in="SourceAlpha"
+            in="blur"
             type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-            result="hardAlpha"
+            values="0 0 0 0 0.15 0 0 0 0 0.15 0 0 0 0 0.15 0 0 0 0.2 0"
+            result="shadow"
           />
-          <feOffset dy="6" />
-          <feGaussianBlur stdDeviation="4" />
-          <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0.345098 0 0 0 0 0.8 0 0 0 0 0.00784314 0 0 0 0.6 0"
-          />
-          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
-          <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
+          <feMerge>
+            <feMergeNode in="shadow" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
         </filter>
       </defs>
     </svg>

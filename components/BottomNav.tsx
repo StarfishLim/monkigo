@@ -34,7 +34,7 @@ export const BottomNav = () => {
     <>
       <nav className="safe-bottom fixed inset-x-0 bottom-0 z-30 bg-transparent">
         <div className="mx-auto flex max-w-md items-center justify-center px-4 pb-5 pt-1">
-          <div className="flex h-[84px] w-[320px] items-center justify-between gap-3 rounded-full border border-slate-200/70 bg-white/95 px-4 py-3 shadow-soft-lg backdrop-blur-md">
+          <div className="flex h-[84px] w-[320px] items-center justify-between gap-3 rounded-full bg-white/95 px-4 py-3 shadow-soft-lg backdrop-blur-md [-webkit-tap-highlight-color:transparent]">
             {navItems.map((item) => {
               const isActive =
                 router.pathname === item.href ||
@@ -47,7 +47,7 @@ export const BottomNav = () => {
                   aria-label={item.label}
                   className={
                     "flex items-center justify-center rounded-2xl p-1.5 transition active:scale-95 " +
-                    (isActive ? "bg-jungle/10 ring-2 ring-jungle/60" : "opacity-70 hover:opacity-100")
+                    (isActive ? "bg-jungle/10" : "opacity-70 hover:opacity-100")
                   }
                 >
                   <img

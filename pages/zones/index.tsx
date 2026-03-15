@@ -133,7 +133,7 @@ export default function ZonesPage() {
                   <img
                     src="/zone-node-locked.svg"
                     alt=""
-                    className="h-full w-auto object-contain drop-shadow-md"
+                    className="h-full w-auto object-contain drop-shadow-sm"
                   />
                 )}
               </div>
